@@ -1,0 +1,24 @@
+### Nodejs
+One of the aspects, for nodejs mostly used is Networking, provides already built in methods using using which can able raise or accept the network call, so it can act as a clint aw well as server (if that netwok, return the response)
+- So in this, process of creating the project we would how it  will work as the server. So ham bahut baar server bana rahe honge lakin kuchh logg directly, batate hain ki, express, next, etc use karke server bana lete hain hai lakin yaha ham khud server banayenge. Ye library sirf hamara kaam asaan karti hai. 
+
+### How can you actually write a server in a node js?
+- Firsltly creates the index.js file
+- Nodejs provids you the http module, http module help in doing the all type of http interation. 
+- so we are requiring it for the use it means it is the core module of the nodejs, basically we do not need to install it or manage it. 
+- How network interation work, two machine have interact with each other, one act as clint and on act as server, if the client want request the server, then it must know the ip adress of the serever, and they also need to know the port no of at which the actually server process is happening. Ip + port = Socket address. 
+- so ham yaha apne brawser se request karenge, apne nodejs server par. So we are having the both brawser and server in my machine , technically we can replace the ip address part with localhost, so if they are on same machine then we do need to gave any ip address. 
+- CreateServer() :- So ye fun ek call back function expect karta hai, aur wo call back function jya expext  karta hai? So this is the call back fn we use to create the server, and create server method is reposible to call this call back function. 
+ - So ab agar koi hamko request bhejta hai then ham kuchh toh reply karenge. Us request ke sath kya karna hai, wo sab is call bacj fun mai excute karenge. 
+ - this call back fn accept two object req, res, aur koi chiz aa rahi hai then usko req object configure karega if koi chize ko bhejna hai usko res object  handle or configure karega. 
+ - res object ke pass ek method hai write, we can pass string,json,stringify string anything. 
+ - we need to use res.end so we need to end respose to ensure that request is complete or not. 
+
+ So this is the basic server, we have been created. So agar complex project par kaam kar rahe honge then aise bahut saare req and res object ke aur bhi methods ko use kar rahe honge, matlab project ke according apna server bana sakte hai. 
+
+- Abhi tak toh ham apne server bana chuke hai, then how we are going to start the server. So server object ke pass ek method hota hai listen() method.
+Listen(): Expect:- take PORT, and callback fn
+ - this callback fn will be runing when server is succesfully listening and running
+
+- So abhi toh server aur client same hai, lakin idle case mai aisa nahi hota hai, server kisi machine par chal raha hota hai, aur client duniya mai kahi bhi ho sakta hai. 
+ 
