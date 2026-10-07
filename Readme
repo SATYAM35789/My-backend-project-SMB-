@@ -21,4 +21,54 @@ Listen(): Expect:- take PORT, and callback fn
  - this callback fn will be runing when server is succesfully listening and running
 
 - So abhi toh server aur client same hai, lakin idle case mai aisa nahi hota hai, server kisi machine par chal raha hota hai, aur client duniya mai kahi bhi ho sakta hai. 
- 
+- When client and server are on the same machine then we donot need the internet, so the client and server can interact, so when server run on another machine, then we need internet. 
+- Then when we are working in the company there is the highly chances that we do not use http module to set up the server because  it can do everything but it cannot provide the ease of the use case, there are framework and libary which make server writing the code much easy and wonderful that what we want, our aganda is to make product, we donot want to go in much more complexity. 
+   - for  that we have the framwork express.js , good community support, good documentation, we can find  the any  type of solution on stackoverflow, linkdin, github, etc. 
+   
+### How using the expressjs we are going to write the server? 
+so we were developing the photosharing type of application, append some photo, share the link of the photo. So we will be seeing how we can setup the http server in node js using express js. Expressjs functions uses internally the http nodejs module. 
+  - Es6 enabling -> add type property to the package.json : for the import and export functionality
+  - imort express from "express" yaha jo express hai wo ek funnction hai. 
+  - aur jab ham is function ko call karte hai then it return the server object
+
+- In the plain server we are able to set/configure that when req comes then what to do and what to response. then is approch mai server ko set up karne ke liye yaha kasie karenge. As this going to be the http server, every http request is going to have a lind of http methods like get, delete, post, etc. 
+  - so we can call , like app.get(), and we can pass to parameter string and callback.So we can define on every tpye of http request, what to do with get type of request. 
+  - Lakin plain-server mai hamare pass ek he call back function tha aur hamko ek call back mai define karte the ki hamko kya karna hai on / , /ping, etc
+  - ab yaha jab request kisi specific url ke liye aayegi then uske liye specificallly callback run hogi. 
+    - req :-  incoming http request
+    - res :- to be outgoing the http response 
+    we can send the different type of response. 
+
+    - verifying the post  request in the plain server using javascript, so we can go through inspect-> console-> write basic function or async type and here request the post request. -> fatch("url", {method : POST})
+    - You can go to the documentation, how to do post request with fetch api -> approch. 
+    - 2nd approch hai html form kr through post request karna as form have the property, action/method. this action define the url on which you want to submit the form.
+
+- There is also different http methods such as  :- put, delete, how can we raise the request on this type, again javascript is useful. In similarly. 
+- using brawser url, we are only able to do the get request. 
+- Html form allow only to do the get and post request, it doesnot allow another http method like delete, put, etc. 
+
+- so ham har baar toh request brawser ke console mai jakar js ke through method nahi call karenge as it bahut jayda waste of time ho jayega. So there are many developer tool some of them is postman. 
+
+Postman ki bahut saari functialities ke baare mai pad rahe honge. Dekho poject banate smaay ham bahut saari api call kar rahe honge like 100 of api, for everey api, i have to write the base address, for every api. If by chances we have to change the port no then we have to go all api we have to change the address. For that postman gives the, variables, inside a collection and we can use inside the request. 
+  - Creating a variable in postman. 
+- There is lot of alternative of postman. 
+
+### Connect the mongoDB to our project
+- We need two things to connect with mongodb instances 1. URL of the instance to connect with as we are going to connect the different server. 2. mongoDb libarary , need a libaray which have the all logic to connect with mongoDB. Nodejs has different libaray by which we connect to the mongodb instance. So we have the mongoDb driver through which we can able to connect with the mongoDB instances. 
+Steps are :- 
+  1. First require the MongoClient from the MongoDB
+  2. Const URL set karo
+  3. Then is url ko pass kardo MongoClient mai and usko store karlo client const mai
+  4. Then is instance jo client hai usko client.connect() call kardo
+
+  There are also set of libaray which we call as ORM(Object Relational Mapper) and ODM(Object Document Mapper) , both are same, only the difference is ORM is relational DB and ODM is for the Document DB.  The puspose as developers we are more found of class based code,etc. 
+   - These libary provides us the function which we can directly use, we do not need to write raw querries. The ORM and ODM libaray , internally converts these as an querries. 
+   1. Write our own server logic
+   2. Then call the ODM functions 
+   3. The ODM will convert it into the querries. 
+
+   Most famous ODM for mongoDB is mongoose/prisma/,etc
+
+   So we can follow some basic steps to connect the mongoDB with mongoose. 
+   1. Require
+   2. Call using the async await using mongoose instance , connect. 
