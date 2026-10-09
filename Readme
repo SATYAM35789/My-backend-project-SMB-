@@ -283,3 +283,51 @@ Similarly we can write the post repository.
 1. Create the instance of the postSchema
 2. Create the async function and export it, createPost, 
 
+## Service Layer :- 
+  Service layer doesnot directly use the ORM calls, it calls the repositary layer. 
+  ### Post Service :- 
+  1. Create the createPost which is an async method, it take input createPostObject
+      Different steps of createPost methods are :- 
+      1. Take the image of the post and upload on the aws. 
+      2. Get the url of the image from the aws response
+      3. Craete the post with caption and the image url in the DB using repository
+      4. Return the post object
+
+  There can be multiple steps, to implement their business logic, like Want to do some compression on the image, some kind of filtering on the image, that we want to integrate it with some kind of the ml service :- type of image like abusive image, etc. Other kind of machine learning services which deal with the quality of the image. 
+  So we can write the steps of all the business logic inside the service layer. 
+
+ " Learning is journey, it is not the destination." In every tech there is some thing new to learn, when we leanring things in the software development then we cannot say that we learn everything, when you work on the system, it may small as uploading an image, it may big as google docs. So when we work on the sysytem then we realize the some intercases of the sysytem. 
+
+ Currently how the flow look like for us :- 
+ - There is request, which comes from the client, for now postman is our client. 
+ - That request have the image.
+ - On the server side we are going to accept that request, So Express server we accept the image.
+ - From the express server, we try to communicate with aws server. 
+     - During that we will be uploading the image on s3. 
+     - AWS response back to the express server, having the uploaded image URL. 
+  - When we have the Uploaded Image URL at the Express server then it return back to the Client as an response from the server. 
+
+  Disadvantages of these architrcture :- 
+   - Two level of upload of an image is done here. 
+     1. Postman to Express Server
+     2. Express Server to Aws
+  
+  For the image, it not going to matter a lot, Istead of these image, if we hve 16 GB file then due we want use the bandwidth of the user our twice to upload that. 
+
+  So we can resolve this kind of issues using S3. Lets see how :-  
+  1. We send the meta data about our files from the client(postman) to express server. 
+  2. Express server also send the mata data to the AWS server. 
+  3. Now the AWS can send the presigned URL, It is an temporary url that AWS can provide us. 
+  4. Now we return the presigned url to the espress server to the client. 
+  5. Now Client can able to directly upload the image to the AWS, using presigned url. 
+
+  So using this approch we do not need to upload the image two times. 
+
+  Bucket Policy :- AWS has centralized service called IAM(Identity Access Management). This service is responsible allocating permissins and policy to user and services. 
+
+  So we need to have some libaray so that we can able to store the images or different files to our S3 at AWS :- 
+  1. AWS SDK (Software Devlopment Kit) :- So if we want to interact with AWS and definately AWS must have some API imposed. And we can use that API, and we will be completing our task. 
+   - AWS say that we, donot to call the network call, AWS wrape that API or network call in the function, we can just call that function, and this function abstract whole logic of making network call. So internally AWS is making network calls, we just abstracting that network calls, we just doing the functions calls.
+  2. Multer : To manage the uploads we have the package called multer. There is some alternative for the multer to exist. 
+  3. Multer-s3 :- The normal multer package helps us to upload the image or files from the client to  express server , whereas multer help us to upload the files at s3.   
+   
