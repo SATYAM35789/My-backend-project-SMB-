@@ -238,4 +238,29 @@ There is two way to implement this kind of structure :-
 
 note : We need the user collection to make the any kind of querry from the mongoose.
 So agar ham apne code ke through database se interact karenge then only this validation will work. If directly interacting with database MongoDB then these validation will not work. 
-- with adding the timestamp property, Whenever we are having the entries in user collection, everey entry have two extra proprty created at and updated at, etc. These is autmatically handle by the mongoose, we do need to passed the value.  
+- with adding the timestamp property, Whenever we are having the entries in user collection, everey entry have two extra proprty created at and updated at, etc. These is autmatically handle by the mongoose, we do need to passed the value. 
+
+So in general Instagram post we are having just one captions and one images for now. 
+
+### How can we store Image. 
+There are the multiple ways to store the image :- 
+1. Brute force approch :  The approch se should never do. If someone uploads the image, to our plateform, and we store the image on the server. Like having the assets folder -> and we store the imgages there on the server. 
+- Bad approch beacause, it taken our much of the space of  the server. 
+- Lets say that multiple instance of the server is running. like s1,s2,s3, etc Lets say someone upload the image at s1, after two days same person upload the images, then it goes to s3, beacuse of the Load Balancer.S2 ke pass pahle wali image nahi hoga so usko yaha replicate karna hoga, which not good practice. 
+
+2. Convert your images into Base64 format : The problrm is in these is that it takes the very huge string which stores in the byte. 
+
+3. Use Block storage services(best) : like AWS and Codanary. So we can store the image at AWSs3 where it store the image and return it as an object URL. So it is the storage service that is provided by the AWS, which is called the storage service. Any type of file we can upload and get it in the object url format. 
+- Object url ko ham use kar sakte directly in the database. 
+
+If you want to store anything  on amazon S3, then we have to create a bucket, a bucket has many objects. Objects are evenetual file that we have to store. 
+ -We are going to implement the post Schema , where we will be having the imgages we have posted in the url form. 
+
+### post Schema
+1. Create the instance of the mongoose
+2. Creating the postSchema :- Using the instance, call the new instanceName.Schema()
+   - In this method/constructor and object will bw passed, So in the object we can gives the details/property we want in the schema. 
+   - Another object can also be passed, timestamps: true, which is confuguration object 
+3. Creating the post collection :- 
+    - instanceName.Model() call karenge. Argument: String-> Collection name , postSchema ko pass kar denge
+4. export the post collection
