@@ -264,3 +264,22 @@ If you want to store anything  on amazon S3, then we have to create a bucket, a 
 3. Creating the post collection :- 
     - instanceName.Model() call karenge. Argument: String-> Collection name , postSchema ko pass kar denge
 4. export the post collection
+
+- We can also use the cloudainary, it is similar type of blog stoage service. 
+
+## Repositaries Layer :- 
+Having those functions, which is going to make our db queries. 
+
+### User Repository :- 
+1. Create the instance of the userSchema
+2. Create the async function and export, findUserByEmail()
+    - Use try and catch method, In try use the ORM queries, how do we know that which is going to fit in this, for that go to Mongoose query docementation. 
+    - so using the instanceName.mongooseQueryMethod i,e User.findOne()
+
+So we have many more functions like find(), findOne(), etc in the mongoose documentation we can see.  
+
+### Post Repository :- 
+Similarly we can write the post repository.
+1. Create the instance of the postSchema
+2. Create the async function and export it, createPost, 
+
