@@ -72,3 +72,170 @@ Steps are :-
    So we can follow some basic steps to connect the mongoDB with mongoose. 
    1. Require
    2. Call using the async await using mongoose instance , connect. 
+
+### How exactly an ODM works?
+We will be writing code in javascript, 
+1. so One way to connect the js code directly to database server. In this case we have to write the raw qurries. 
+   i,e JS Code -> Database Server
+  - Writing raw queries is not so cool or we not so much familier with the raw quries. 
+  - So if we are using mysql, after some time you feel using mysql is not good for your work then you want use pgsql , and we know that there some syntatical differences. 
+  - Also the problem is that our javascript code will be tightly coupled with raw qurries, so if want to swith the mysql to pgsql then we have to change the mysql raw qurries to pgsql raw qurries. 
+
+  To resolve these issues we have the ORM/ODM. 
+
+  Object Relational Mapper:- Means jo bhi relational database queries hai unko object oriented function call. So We donot need to write the raw queries we write object oriented functions. Which will bw convereted to raw queries. 
+  - they convert object oriented functions to raw queries. 
+  - Most famoues ORM is Sequelize. It support different database like mysql and pgsql. 
+  - TypeORM 
+  - ActiveRecoed(Ruby), HibernateORM(java), etc
+
+  Using ORM , how our code communicate with database server :- 
+  JS Code -> ORM/ODM library  -> Database Server
+
+  => Js Code -> JS functions -> ORM/ODM libary -> convert js to raw qurries -> DB Server
+
+  => Now In this case if any user want to switch database then what will happen :- 
+  So hamko js code same rahega, wo same function ko call kar raha hoga, we need to change the ORM configuration i.e that not connect with mysql, connect with pgsql. And orm will be automatically convert the jscode to pgsql queries. 
+  - Working woth orm is very easy. 
+
+### How we need to structure the server it may in different languages like  java, python, js, etc so that interactions will be running efficiently. 
+- There is crucial pattern we need to understand first :- 
+  #### MVC Architecture :- 
+  MVC architecture is a set of pattern using which we can set the project in a good or certain way :- 
+  -The basic MVC architecture we will be seeing is not the final implementation we will be doing :- 
+  - MVC(Model Views Controllers) : Ex You are person and book a table in resturant, you check the menu and after some waiter come and ask for your order go to kitchen. So you cannot fo to kitchen directly , waiter is the person who have the access of both kitchen and table site of the restaurant. So when items have been made in the kitchen then then waiter brings the item to you and serve you. Waiter is layer/interface that switch between you and kitchen. 
+    - So in this example kitchen is very cruscial for the restaurant inside the kitchen there is cheif who knows the all recepies, they know the all the raw material that is required to make a certain type of a dish all the raw material storage is also inside the kitchen. So we can say that kitchen contain all the business logic of the restaurant. 
+    -TableaNd menu are the something user see and intereact with and understand what options are avialable, so this is the layer where user interact. 
+    - Waiter is like middleman, which receives and send response. 
+    So the Restauant is the good representation of the mVC architecture. 
+
+    MVC helps us to structure your backend apps well. 
+
+    Munu is exactly work like a View, it is the interface/layer where user interacts and cable to see. The frontend part. 
+    Kitechen is the Model :- Model is layer of business logic, where all business logic is written. 
+    Waiter is the controller :- Layer inside the project, which recives the request from the view and passes it to the model and model process the request and give response to the controller and controller takes the response from the model which is busniess logic and send it back to the virw. 
+
+   So this is how model , view and controller works. 
+
+   In model View Controller pattern, we divide our project into the three layers. 
+   1. view :  user interacts, all the frontend parts like html, css, etc
+   2. Controller : Request from the view has to come to the Controller, it receives that request and farword for business logic preparation. Ek he kaam hota hai, view se request lo model ko do and model se response lo view ko bhejdo. 
+   note :-  We should not write the business logic in the controller, most of the people do so. There is so many disavdvanteges of doing so. 
+   3. Models : Business logic will be defined here. 
+
+   Django, Ruby on rails, spring boot, etc these emphsize and enforve us to use the MVC architecture. These framworks recommand us use MVC architecture. 
+
+   Things are not that simple when we work for the production, startups. You will be seeing many youtubers they follow the basic MVC architecture if they do not follow then we shouldn't watch that video. 
+
+   So the company use these architecture but they midified it to make it, more granular. 
+   We can say that we have divided our logic in three parts but in the daily useCase,  these layer , singly are so big layers. 
+
+   Monolith and Microservices are the patterns, that you decide based on which, wheater all the  business logic work in one server or having different different servers, that handles seperate business logic. Seperate scalability needs.  
+
+### What companies doing now a days in imolementation :- 
+Views : It will be seperate from the MVC. There is highly chance that ther is a seperate react and Angular based project which seperatly handle the view. So nowdays we do not club the view to the MVC part. Earlier wheb react and Angular frameworks are that famous, then at that full stack project , they request the server, and on the server side, server used to recive the request and do the business logic and everything and prepare a kind of html and then whole html is send back as an response. Is tarh se ham pahle kaam karte the. 
+ - Client is not doing any computation. Everytime client makes the request, it refreshes the whole page, server recives that request and process the request and after process the request, it prepares the html file, and send that html back to the reciver.
+ - NowDays, view is seperate project , in any of the framework. 
+
+On the backend parts we  just keep to main components, which are further divided into similar granules :- 
+1. Req is recived, processed and sent for the business kogic computation 
+2. Business Logic
+
+- In the basic MVC model, in this conroller is responsible for reciving the request, who is going to do the request validation. Is controller going to that or models going to that. 
+  - If controller going to that controller has more responsiblity. Model has also having more responsibility. 
+  - We have an example, cheif of the kitchen is not resposible for the ordering of the items, All the cheif is not going to decide for the deases, head cheif, and different cheif. So the just kitchen have its own responsibilty  which is more. Similarly models also have. 
+  - Who is going to responsible for storing the data. So if the seanario happens that if the another branches have some item you need it, then how you are going to interact. So if business logic wants to use some other resources like payment, etc. 
+
+Lets see how the actually work is done :- 
+1. Client side : View :- So when view is going to do the request, so this request is not directly taken by the controller. Actually the controller layer are having some functions or class. 
+  - So there may be the lot of controller gunction, then how to decide , on request, which function have to be triggered. How going to map the right request to right controller? So for that we have the routing layer.
+2. Server Side :- 
+-Routing Layer : is responsible for mapping the right request to desired controller. Having the core logic which will help in mapping the particular request to particular type of the controller. 
+ - If you go with technology like springboot, Ruby, etc in thse type of heavy framework, in these framework internally these routing is automatically implemented by the framework. 
+ - If we go to simpler framework like flask,node express then routing layer we have to manage by yourself. 
+So ye toh confirm hai ki Routing layer exist karta hai, if we do not do these then framwork would implement it. 
+
+- Validation Layer : It is resposible  for the validating the request, weather the req has the right input of parameter, etc Any kind of request validation is done in the validation layer. 
+
+- Contoller Layer : Now controller just accept the request and farword it to the logic layer. So it is cosisting the functions which are resposible for the accepting the req and farworfing it to the service/business layer. 
+
+- Service Layer :- In this layer we would be writing the actual business logic, It contains the functions and classes which has the all the logic required to complete the request. 
+  - like If you want to register the user registration. 
+  - If want to book the ticket, then service layer should contains the logic like, seats in the theater is already book or not, Show timing is available or not. 
+
+- Repositary Layer : Service layer interact with the Repositary layer. It has the clesses and function resposible for interatcting with the database. 
+  - Repositary Design pattern :- 
+    So lets have the function getUserByEmail we want to call these function, Where we need to implemented these function.
+    1. Implement it in the service layer only -> Wrong approch, why? Implementing these in service layer would have the lot of problem, So if we have the DB of mysql, it would look like these function will make the connection with mysql database, So if want migrate for another database for the useCase. Then unnecssarly we have to come to the service and have to make the changes. 
+      - So we are not changing the business logic, In business logic we need am email, and you so some configuration. Only the thing is changes how and we fetching the user and from where we are fetching is from the DB. 
+      - Service layer ko impact pahuchega then testing mai impact aayega.  
+    
+    2. Still write this in service layer but instead of raw queries use ORM -> Wrong appproch.
+    We can simply taken these functions from the ORM. Same problem exist So currently we are having ORM that interacts with mySql, if want to use another DB like QsandraDb, There may be not such ORM exist that help us to migrate from mysql to qcandra. So for that we have to sepeatly ise the qsandra based ORM , change all of logic inside service layer. 
+
+    3. Segregate the DB interaction in the new layer. 
+    I we do so then getUserByEmail would lie in the another layer, so if service layer want to access this method then it can directly call thses method from another layer. Service layer is not responsible for how you implemented it. 
+    - And these new layer is responsible for the migration of the DB, so if you are using ORM or raw quries our servive layer will not affeted. And these seperate segregate layer is called the Repository layer or DAO Layer (Data Access Object). 
+
+    In the repositary layer, we can use the raw queries or ORM is the choice. 
+    - So if we want to work these queries and ORM  in repository layer, we need to store the schema of the object. 
+
+    - Schema Of database : is the representation of the how the collection or tables will be looking like. Basically the representation of the table is schema. 
+
+  - Schema Layer : stores the schema of the DB, which the ORMs might depends on. Schema layer is also renamed as the models or DB also.
+
+  - Service layer, while Implementing the logic, you need to interact with external sysytems. There may be some external services and external projects, which we need to interact with network call. These networks call is mostly faciliated by the network calls. 
+
+  API Layer :- Service layer is interacting eith API layer and fetch the data from the external sysytem. 
+
+ - Sometimes we need to store the bunch of configuration, For that we have the config    layer -> Any type of config will be setting in this layer. 
+ - utils/helper -> It may have any function business logic or req accept, it just the helper function. 
+
+ There may some more layers-> On the basis of requirement. There may be layer.
+ DTO(Data Transfer Object) layer :- These is the object which helps in the data transfer. Contains the classes for any request has to come and the response object that has to go. Interacts with controller. 
+ - Contains the class definition for the any req object come to the system, and response object coming out of the system. 
+
+There is two way to implement this kind of structure :-
+1. - config/
+   - controller/
+   - schema/
+   - validators/
+   - services/
+   - repository/,, etc
+   These kind of project development, is called as component based structure. Zepto follow  these kind of the implmentation. 
+
+2.  Second type of project development is feature based. Taking the example of the product catalyst service
+- /products : all the features related to the products
+   Inside the product features we were writing their :- 
+   - /controller
+   - /validators
+   - schema, etc
+
+- /categories : all the features related to catgories
+  Inside the category features we were writing their :- 
+   - /controller
+   - /validators
+   - schema , etc
+
+- /searching : all the features related to searching of the products. 
+   Inside the searching features we were writing their :- 
+   - /controller
+   - /validators
+   - schema, etc
+
+  Google uses 2nd approch to segregate their product/ services. 
+
+  Mongoose is our ORM . We were implementing the MongoDB , and it is the schema less. You can insert data in any format you want. Mongoose provide a sense of pseudo schema. If you don't want to implement schema that is ok but if then you can do also , but these schema will be not enforce on the MongoDb.It just a our project level, it make sure to understand things. 
+
+### UserSchema :- 
+1. Create the instance of mongoose.
+2. Creating the userSchema :- Using the instance, call the new instanceName.Schema()
+   - In this method/constructor and object will bw passed, So in the object we can gives the details/property we want in the schema. 
+   - Another object can also be passed, timestamps: true, which is confuguration object 
+3. Creating the user collection :- 
+    - instanceName.Model() call karenge. Argument: String-> Collection name , userSchema ko pass kar denge
+4. export the user collection
+
+note : We need the user collection to make the any kind of querry from the mongoose.
+So agar ham apne code ke through database se interact karenge then only this validation will work. If directly interacting with database MongoDB then these validation will not work. 
+- with adding the timestamp property, Whenever we are having the entries in user collection, everey entry have two extra proprty created at and updated at, etc. These is autmatically handle by the mongoose, we do need to passed the value.  
