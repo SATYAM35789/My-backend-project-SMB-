@@ -331,3 +331,117 @@ Similarly we can write the post repository.
   2. Multer : To manage the uploads we have the package called multer. There is some alternative for the multer to exist. 
   3. Multer-s3 :- The normal multer package helps us to upload the image or files from the client to  express server , whereas multer help us to upload the files at s3.   
    
+   ## Middlewre :- 
+   At a point of time, sending the request to the server, request first go to the routing layer, If you want to do some validation you can do if not then it go to the controller.
+   Middleware is the functions, that have the access to the request object, response objecta and the next middleware functions. 
+   ```js
+   app.get('/', (req,res)=>{
+    return res.send("home")  
+    })
+   ```
+   - Whenever we have some request we map it to some function. So we can say that these are doing some kind of routing :- 
+   ```js
+   app.get('/', fun1())
+   ```
+   It routing the every request to /ping on the function fun1(). 
+   So when we have some request we map it to some function then  we can these function like fun1() is the controller. Beacuse these function is creating the request and responsible creating the response. 
+
+   So jaha ham pahle route dene ke baad ham function call lagate the, ab isko aur simpler karne ke liye we are having ham controller bana liye hai haja ham function define karte hai aur isko us function call ke jagah bula lete hai. 
+
+   So just like the controller we are also have the middleware :- 
+   Middleware are the function, which have the access to three things :- 
+   1. request object, the same request object that controller have the access
+   2. response object, the same respnse object that controller have the access
+   3. next middleware, when we have the request on middleware we can have the chain of middleware. M1 --> M2 --> M3 --> M4 ---> controller
+
+   - So sare middleware ke pass req obj, res obj and next middleware ka access hoga , last middleWare ke pass controller ka hoga. So we can also say that contoller are also a kind of middleware. But the contoller have not the access of the next middleware. 
+
+   - Middleware is the set of functions such that one function has the access to next function just like the linked-list. We can imagine it like linked list. 
+   - All the function, of the middleware has the access of same req and res object. 
+   - We can call the middleware in comma seperated as well as , wrapping all the middle ware in the square bracket just like array aslo. 
+
+   Middleware are useful in modifying the request. See the useCases of the Middleware at google.      
+
+  ### From our client we need to send some data to the server. There are three ways to do so :- 
+  1. url params : it is the some kind of the information that we embeded into the normal URL and send to the server. So in the URL, where ever we put the colon (:), after this we have the becomes the variable part of the url, which we called the URL params. 
+   - So how can we able to access that variable? -> URl variable data will be present in the request (req) object. i,e req.params.variableName. 
+     ```js
+      app.get('/ping/:name', (req,res)=>{
+        const name = req.params.name
+        return res.json({message: "pong" + ' ' + name})
+      })
+     ```
+
+  2. query params: When we have the URL, and in the url we having the question mark, after the question mark we have ?k1=value1&k2=value2 in such format. Here we send the info directly in the url, when the client request then we sending the information. 
+   - So we donot need to seperately define it inside the url. It is seperate from the url  i.e seperate set of key-value embeded it inside the url. 
+   - Access through req.querry
+   ```js
+    app.get('/ping', (req,res)=>{
+      console.log(req.querry)
+      return res.json({message: "pong"})
+    })
+   ```
+  3. req body : 
+  - Accessing request -> req.body
+   ```js
+      app.get('/ping', (req,res)=>{
+        console.log(req.body)
+        return res.json({message: "pong"})
+      })
+   ```
+  - Client side like postman has the option Body, ham waha jakar ham , select karenge ki ham kis type ka data bhejna chahte hai, waha se jo chahe wo info bhej sakte hai. 
+  - So ham apne path se request kar rahe honge, we are unable to send the data directy throuugh the body. So by default express server does not read the request body. 
+  - Reason :- We can understand through the Postman, so we can see that Body section we have the lot of ways, through which we can send the req. 
+    - So when we request the http req, then we might be sending the data, might be in the form of text, might be in the json form, etc When we send this over the network, and we know that over the network, things gets converted in the binary form. So this is no more the json. It is conevrted in the binary. This process is called the serialization and deserialization. (We have this problem on leetcode in DSA). 
+    - We need to serialize the binary tree and deserialize the binary tree. Its means like ham directly binary tree ko toh data mai nahi bhej sakte so ham isko pahle us form mai change karenge jis form mai bhej sakte hai, phir us form se isko normal form mai karenge for understanding. 
+
+    - So here the json/text form data will be serialize in the binary form then when it reached we need to deserialize the data. So we donot know that in which form the data has coming from the client means How we find that in which format we need to deserialized it. We need to configure it that is what express says. What type body we want to accept. 
+    - Middleware will help here. So express give us the middle ware i.e express.json(). This middleware help us to convert the req.body to json. (serialize and desrialize wala kaam karta hai) 
+    - And we can also wrap these middleware in the expressInstance.use(), use fun jo hai wo add kar dega hamare middleware ko on every request of the body. So ab iske baad koi bhi request ho wo by default is middleware ko pass karke aage badega. 
+    ```js
+    app.use(express.json())
+    ```
+
+    ```js 
+      // Req body ke through clinet info bhej paaye usko liye
+       app.use(express.json()) // json form mai message aa paaye or deserialization enabling
+       app.use(express.text()) // text form mai message aa paaye
+    ```
+
+    What is URL encoded data ? 
+    - So our url bars does not understand the every single character of the url, 
+    - Go to convert url to url encoded 
+    - So  ye koi bhi url leta hai, usme agar not understandable character hai like comma (,) to a special encoding. 
+
+    Note : 
+    - If you want to register the middleware to every request, then we have add that middleware in app.use() and these middleware like express.json(), express.text(), express.urlencoded(),etc help us to desrialize the middleware. 
+
+    ### Multer Config :- 
+    1. create the instance of multer and multer-s3. So when we hover on multer instnace we come to know that it returns the function, which ia a function. 
+    2. When we call this instance/function then it returns the middleware, lets say it S3uploader. 
+
+    Now wherever we use this uploader, it start working, for the multer upload. How this multer should work, that configuration we can pass  inside  multerInstance as object. 
+
+    acl Access Control List : whatever file we uploading do we want, a public access for that or not. 
+    key : Takes a callback function and this callback function, expect :
+    1. req object
+    2. file :- file uploading from the sysytem
+    3. Another Callback
+      - uniqueSuffix = Ham file ko uniquly identify karne ke liye, usko kaise save kare. 
+      - s3uploader.single() : so we want to store/upload the single file so we it will crated the file for the single upload.
+        - we have more such function like :
+          - .array(): If want to upload the multiple file. And it will take the multiple file upload. 
+        
+    -> UnderStanding this in detail :- 
+       ```js
+       app.post('/posts', s3uploader.single('image'), createPost)
+       ```
+       So whenever we do the post request, then s3 will generate the the middleware for us. That middleware expext the file from us a single file. The key of the file should be image. This key uniqly identify the incoming input. 
+       - so postman mai form ke through ham request send kar sakte hai like key: Image, value : System se image dedo
+
+       Why having the callback and we passing null in multerConfig.js. 
+       Express follow a pattern , error first callback. Express says that if we are having callback and it has to handle somekind of error. Then error should be the first parameter of that callback. 
+        - See the fs module -> read
+        - If pass null then it denotes that there is no error at all. 
+
+    
