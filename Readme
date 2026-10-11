@@ -444,4 +444,13 @@ Similarly we can write the post repository.
         - See the fs module -> read
         - If pass null then it denotes that there is no error at all. 
 
-    
+    ### We have to store the image from s3 bucket to our database. 
+    Till now we are able to send the image to s3 bucket. So we able to get the file name and ObjectUrl of the s3 bucket image. 
+    In postConfig.js :- 
+    - When we uploaded the file successfully on s3, we will be able to get the access of file object(req.file), and the parameter returns by the s3 in this request.file.loaction using this we can able to store the image to database. 
+
+    - Key function will be regulating that how should the file should be uploaded at s3.(multerConfig.js)
+    - Why taking the extenstion from the mimetype : Everyfile has property called the mimetype which define the type of the file. 
+
+    - From the postConfig we need to call the service layer. Service layer is having the createPost object. 
+    - from the service layer we will be calling he repository layer.   
