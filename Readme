@@ -453,4 +453,56 @@ Similarly we can write the post repository.
     - Why taking the extenstion from the mimetype : Everyfile has property called the mimetype which define the type of the file. 
 
     - From the postConfig we need to call the service layer. Service layer is having the createPost object. 
-    - from the service layer we will be calling he repository layer.   
+    - from the service layer we will be calling he repository layer. 
+
+    Summary :- flow for now :- 
+    - app.post('/posts', s3uploader.single('image'), createPost) :- This is the routing layer, and this routing layer is map to createPost controller. Before this controller it have this middleware : s3uploader.single('image') which uploads the image at s3 bucket, and give us the url. 
+    - Then createPost controller, inside this contoller we call the service Function.
+    - In the service function, it internally calls the repository function.
+    - Repository function connects to database, creates the post and return the nes post. 
+    - this post return back to the service
+    - service return back to the controller and wraps inside the json and gives back to the client. 
+
+    We need to write the API :- 
+    - Read all posts
+    - Delete post
+    - update post
+    - Read single post
+
+   ### Implementing the API for having the all available posts. 
+   Whatever the post on database, whenever the user go the homepage, then we would like to listdown the all the available post. So we have one of the challaenges that we need to focused is that, If there is  one million posts, we donot want to have the situation that all the post would be fetched at one shot, payload is havey and the frontend which loading the payloadhas to process a lot of post. And there is no need to post the one million post because no user will be abale to see the one million post in one shot. Probabily able to see the 20 to 30 posts. 
+
+   Currently having the one api by which we are able to ceatePost i.e app.post('/posts', s3uploader.single('image'), createPost). And we need to have one more api which can be able to fetch all the api. 
+   - now we are having only two api, later may be we are haing the 200 api, are we are going to list all the api in this main server file, where we are having the all server going on.
+   - So we are missing the one layer in our project is routing layer, so now we are having the more than one api so it is good time to ceate the routing Layer. 
+
+   ## Routing Layer 
+   - To create the routing layer in the express so there is something called the express router(google search). 
+   - Routing: is the mechanism with which our application is going responds to the client request. For this routing we have the express.Router. 
+   - UseCase of the express.Router :- is used to create the moduler , mountable , routehandler. The word moduler says everything we want to ensure that we have the routing mechansim that is cleaned enough to segregate our logic properly. We have the sepertae module that handle the routing together. 
+   
+   Router in express :- 
+   How router looks like? http://localhost:3000 -> base address. http://localhost:3000/posts -> We cannot understand by seeing this is the as it is API url where we make  some request and get some response. Or it is websites url. 
+   - So segregate the API routes and non api routes so will be prepends our routes with /api i.e http://localhost:3000/api/posts  
+    - By doing so anyone can understand that it  is the api url. 
+
+    Note :- If we are having the api that has been written in the graphQl then in these case we cannot put /api beacuse in grapghql we are having the single graphql url. 
+
+    API Versioning :- 
+    - API : using the api you can expose the business logic to the outer world so that people can cosume your logic. At the point covid, gov of India release some API(rest api), you can able to fetch all the nearby hospital where vaccine is available. 
+    - similar API, like for the upi, user payment Interface that we using in India, The NPCI the organisation that actually controls all about the upi. Actually exposes the lot of API. This is not public but 3rd party app can lile g-pay can use this API. 
+    - So if the Api expose are not so Optimized it may be having the security risks,etc then now they want to release the another version of the API. 
+     - In the impovement of the api, there might be the chance that the req and res structure would be change. Then due the change in the req and res structure , the client have to also change in their logic. 
+    - So client, not got bothered, during the updation of api for  that we have api versioning. In the api versioning we release the multiple version of the api, like 3rd parties app using the version 1 of the api, then npci upgrades those of api, then npci relases the version 2 of api,  NPCI gives the some time to all the 3rd parties apps, NPCI decleared that they have changes the req and  res structure of the api In given time period please migrate from version 1 to version2. During this period they will be also supporting the versin 1 of the api. 
+    - visit the dunzo website. Inspect->network->headers -> request url.  
+
+    How we can use the express Router ? 
+    1. Create router object : So require express object and using this object call the Router method this will return the router object. 
+    2. Similarly we are doing the app.post... calls , here we do with router.post..  . 
+    3. And then export the router 
+    4. Embed the router as a middleware. 
+    5. Call it in the index.js file as app.use() -> here we pass the two parameter
+       1. '/posts': strating of the url
+       2. Redirect kaha karna hai
+       - This line index.js means if the url starts with /posts then use the postRouter to handle the request
+       - In the postRouter we will look at the remaining url part after /posts ka baad jo bhi hoga usko dekhenge, so ham just '/' denge as hamko jis tarah ka request hoga us ko ham handle kar lenge. 
