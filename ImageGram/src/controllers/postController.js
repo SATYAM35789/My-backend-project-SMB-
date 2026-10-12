@@ -14,3 +14,12 @@ export async function createPost(req,res){
         data: post
     })
 }
+
+// Creating dummy controller for checking 
+export async function getAllPosts(req,res){
+    //  return unimplemented
+    return res.status(501).json({
+        success :  false, 
+        message : " Not implmented"
+    })
+}
