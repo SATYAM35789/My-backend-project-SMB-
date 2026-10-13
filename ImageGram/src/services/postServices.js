@@ -1,4 +1,4 @@
-import { countAllPosts, createPost, findAllPosts } from "../repositories/postRepository.js"
+import { countAllPosts, createPost, deletePostById, findAllPosts } from "../repositories/postRepository.js"
 
 export const createPostService = async(createPostObject) => {
     // See the post schema to see what all fields are required to create a post. 
@@ -23,6 +23,12 @@ export const getAllPostService = async(offset, limit) =>{
     return {
         posts, totalPages, totalDocuments
     }
+}
+
+export const deletePostService = async(id) => {
+    // Call the repository function to delete the post by id
+    const response = await deletePostById(id);
+    return response 
 }
 
 

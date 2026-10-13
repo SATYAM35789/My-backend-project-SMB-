@@ -1,4 +1,4 @@
-import { createPostService, getAllPostService } from "../services/postServices.js";
+import { createPostService, deletePostService, getAllPostService } from "../services/postServices.js";
 
 export async function createPost(req,res){
     console.log(req.file);    
@@ -15,7 +15,7 @@ export async function createPost(req,res){
     })
 }
 
-// Creating dummy controller for checking 
+
 export async function getAllPosts(req,res){
    try {
       const limit = req.query.limit || 10
@@ -36,4 +36,24 @@ export async function getAllPosts(req,res){
       })
       
    }
+}
+
+export async function deletePost(req, res){
+  try {
+    const postId = req.params.postId
+    const response = await deletePostService(postId);
+
+    return response.status(200).json({
+      success: true,
+      message : "Post deleted successful",
+      data: response
+    })
+  } catch (error) {
+    console.log(error);
+      return res.status(500).json({
+        success : false,
+        message : "Internal Server Error"
+      })
+
+  }
 }
