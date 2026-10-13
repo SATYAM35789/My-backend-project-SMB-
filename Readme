@@ -542,3 +542,32 @@ Similarly we can write the post repository.
 
   - If have the total documents then we can figure out the number of pages. 
   - We can also calculate the value of current page on the basis of offset. 
+
+### Writing the api for update post
+- so we have the function, findByIdAndUpdate() in the mongoose , go and serach about it on the documenttaion. 
+
+1. Create the method in the postRepository for updating the post
+2. Then go to the service layer and call repository function there
+3. Then go the controller layer and call the service layer function there
+4. Then go to the router layer and register the path for this function. 
+
+- In the postRepository we just call the ODM/ORM function of the mongoose
+- In the postService layer we do the some manipulation with the data we got in the function by the controller function. 
+- In the controller layer, we fetch the required data from the params 
+
+```js
+//  This method will be update the document but it return the old post
+export const updatePostById = async (id, updateObject) => {
+    try {
+        const post = await Post.findByIdAndUpdate(id, updateObject)
+        return post
+    } catch (error) {
+      console.log(error);
+         
+    }
+}
+``` 
+- using this {new : true} only we can ensure, it stops the mongoose to return the old document it always return the new updated document, when the update has been done : 
+```js
+const post = await Post.findByIdAndUpdate(id, updateObject, {new : true} )
+```
