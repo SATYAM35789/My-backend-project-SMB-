@@ -1,7 +1,6 @@
 import express from "express";
 import connectDB from "./config/dbConfig.js";
-import postRouter from './routers/post.js'
-import userRouter from './routers/user.js'
+import apiRouter from "routers/apiRouter.js"
 
 
 const PORT = 3000; 
@@ -12,8 +11,7 @@ const app = express() // it an instance of express
 app.use(express.json()) // json form mai message aa paaye
 app.use(express.text()) // text form mai message aa paaye
 
-app.use('/posts', postRouter)
-app.use('users', userRouter)
+app.use('/api', apiRouter)
 
 app.get('/ping', (req,res)=>{
     return res.json({message: "pong"})
