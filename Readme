@@ -506,3 +506,12 @@ Similarly we can write the post repository.
        2. Redirect kaha karna hai
        - This line index.js means if the url starts with /posts then use the postRouter to handle the request
        - In the postRouter we will look at the remaining url part after /posts ka baad jo bhi hoga usko dekhenge, so ham just '/' denge as hamko jis tarah ka request hoga us ko ham handle kar lenge. 
+
+    - We have seen now that our index file farwarding the request to the router. but we can also farward the request from the index file to router and from these router to another router. Hence Nesting of route can be done here. 
+
+    - We can do app.use('api/v1/posts', postRouter) in index file , and farword it to the router but this way of implementing is good for the small scale project but not for the large scale. For example if different version of the api is come then we have to write again in the index file so ye phir pahle jaisa ho jayega jiske liye hamne router banaya tha mesh kam rahe .
+      - So ab ham karenge ki agar koi bhi request aata hai /api par then we call the apiRouter -> app.use('/api', apiRouter)
+      - phir api router se userRouter aur postRouter ko call kar denge on the basis of reuest. 
+
+      Note :- All the inner router will bw using the router.use() method. So this will be checking if the remaining part of the url is start with this, jo bhi string hai uske ander. 
+      - And the very last of the router will be having the http method or type of request we were doing. 
