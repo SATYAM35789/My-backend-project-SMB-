@@ -1,4 +1,4 @@
-import { countAllPosts, createPost, deletePostById, findAllPosts } from "../repositories/postRepository.js"
+import { countAllPosts, createPost, deletePostById, findAllPosts, updatePostById } from "../repositories/postRepository.js"
 
 export const createPostService = async(createPostObject) => {
     // See the post schema to see what all fields are required to create a post. 
@@ -31,6 +31,12 @@ export const deletePostService = async(id) => {
     return response 
 }
 
+export const updatePostService = async(id, updateObject) => {
+    // Call the repository function
+    const response = await updatePostById(id, updateObject)
+    return response;
+}
+ 
 
 
 
@@ -38,7 +44,10 @@ export const deletePostService = async(id) => {
 
 
 
-    // 1. Take the image of the post and upload on the aws. 
+
+
+
+// 1. Take the image of the post and upload on the aws. 
     //2. Get the url of the image from the aws response
     //3. Craete the post with caption and the image url in the DB using repository
     //4. Return the post object
