@@ -515,3 +515,30 @@ Similarly we can write the post repository.
 
       Note :- All the inner router will bw using the router.use() method. So this will be checking if the remaining part of the url is start with this, jo bhi string hai uske ander. 
       - And the very last of the router will be having the http method or type of request we were doing. 
+
+  ### Writing the api to get all the posts.  
+  So this api will be fetching the posts but it is not fetching the post directly all the posts from our database, idealy it should fetch the posts in the paging network fashion. So like if having the 100 posts then we it should fetch 10 posts on first network call and next 10 posts on next call and so on. So on every network call we will be fetching the next 10 posts.
+
+  In order to make the paging network api how the api looks like? 
+  api/v1/posts?querryparams -> generlly we use the query params
+  properties of querryParams :- 
+  limit=10 :- No of records we want to send
+  offset=0 :- starting the recods drom where we want to send the records
+  api/v1/posts?limit=10&offset=0
+
+  getALLPost() :-
+  1. Fetch the limit and offset from the query params. 
+  2. Now we need to pass this limit and offset to service layer, things can be fetched. 
+  
+  lets see how the database querry for the paging concepts looklike? There are also limit and skip method in mongoose, default method exist. 
+  - we use the .limit(10) to limit the amounnt of fetching data
+  - we use the .skip() , so agar first 10 records chahiye toh skip ko 0 kardo which means ki do not to skip any post and skip 10 means pahle 10 ko chod do uske baad wale ko posts fetch karke lao
+
+  - We need to show the latest data, so we would like to sort the data in the descending order. So we have the method in mongoose for sort() go to documentation to see how can we use this method. 
+
+  - To show the total no of pages, the extra info which could be shown by the user on their ui page -> countDocument() in the mongoose. 
+
+  - const totalDocuments = await posts.countDocuments() : so we donot want our model  to interact directly interact with service layer. so we made the method countAllPosts in repositories. 
+
+  - If have the total documents then we can figure out the number of pages. 
+  - We can also calculate the value of current page on the basis of offset. 
