@@ -1,4 +1,4 @@
-import { createPost } from "../repositories/postRepository.js"
+import { countAllPosts, createPost, findAllPosts } from "../repositories/postRepository.js"
 
 export const createPostService = async(createPostObject) => {
     // See the post schema to see what all fields are required to create a post. 
@@ -10,6 +10,19 @@ export const createPostService = async(createPostObject) => {
 
     return post
 
+}
+
+export const getAllPostService = async(offset, limit) =>{
+    const posts = await findAllPosts(offset, limit)
+
+    // Calculate the total no of posts and total number of pages 
+    const totalDocuments = await countAllPosts()
+
+    const totalPages = Math.ceil(totalDocuments/limit)
+
+    return {
+        posts, totalPages, totalDocuments
+    }
 }
 
 
