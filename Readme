@@ -571,3 +571,41 @@ export const updatePostById = async (id, updateObject) => {
 ```js
 const post = await Post.findByIdAndUpdate(id, updateObject, {new : true} )
 ```
+
+### Validation layer :- 
+So we are left with the validation layer, as if now if someone creating the post we donot make necessary that what is atlest need to create the post like caption is must or an image should be there. 
+
+- We can also write the customs validation that we can build. or We can use third party libraries is classValidators, zod, etc. We can do the manual based we see later. 
+- We are going to implement with zod, so it is the typescript based library. 
+- After installing the zod, we try to the setUp the middleware. 
+
+zodValidaor.js :- 
+- The function validate have the callback function which expect :- 
+  - schema : zod says that for any request you can define the schema kind of an object, so it is the expected input properties for the particular request body. 
+  - using this function we return the another function which is the kind of middleware which have the try catch. 
+
+  - schema.parse() : schema is the zod created object. This object will have the parse property. So inside the parse fun we can pass the javascript object and it will check whather the incoming javascript object is validating the schema or not. If req passed then it go for the next layer if not then it through an error. 
+   - In zod we have the custom logic our file schema validation we can serach on google and take the reference from there. 
+
+   - Issues while Implementing :- 
+     - So the multer has the capability to read the form-data from the client postman, So we are validating the request before it reaches to the multer. 
+     - so we are able to validate the urlencoded data
+
+     Solution for this problem  :- 
+     1. Using the multer instance
+      - Is approch ko use karne ke baad ham form-data ke through caption toh change kar paa rahe hai, but image bhejte samay error aa raha hai. 
+      - unexpected error has been come :-  so we need to properly configure this multer , as what the necessary requirement we need to check as we do on the multerConfif.js. 
+    
+    2. Validate ham directly, multerConfig mai he karte hai. 
+
+    - So we have the problem for zod and multer combining is that 
+       - We donot want zod validation to go before the aws upload
+       - and zod is not able to read the image because multer has not been configured
+       So it is kind of deadLock 
+
+       Resolve :- So we put the zodPostSchema only validating the caption. 
+
+       - And for the file validate/image we go to the multerConfig and validate their directly wheather the image has been come proper format or extension. 
+       - In the postController, we have set the resposne to send on the network that Image is Required.
+       So we have done the manual validation for the image. 
+       - We can also add the MIME Check, if the file is not particular type then you show them to send the response status accordingly. 
