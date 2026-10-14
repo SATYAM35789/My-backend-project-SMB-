@@ -7,9 +7,12 @@ const PORT = 3000;
 
 const app = express() // it an instance of express
 
+
 // Req body ke through clinet info bhej paaye usko liye
 app.use(express.json()) // json form mai message aa paaye
 app.use(express.text()) // text form mai message aa paaye
+app.use(express.urlencoded())
+
 
 app.use('/api', apiRouter)
 

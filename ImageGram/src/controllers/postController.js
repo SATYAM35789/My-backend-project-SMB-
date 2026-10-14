@@ -3,6 +3,14 @@ import { createPostService, deletePostService, getAllPostService, updatePostServ
 export async function createPost(req,res){
     console.log(req.file);    
     
+    // Validating the image
+    if(!req.file || !req.file.location){
+      return res.status(400).json({
+        success : false,
+        message: "Image is required"
+      })
+    }
+
     // Call the service layer here
     const post = await createPostService({
         caption: req.body.caption, 
