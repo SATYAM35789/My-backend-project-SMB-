@@ -748,5 +748,22 @@ zodValidaor.js :-
   - register the router in user.js
 
   - In zodSigninSchema.js create zodSignInSchema. 
+
+-> Signin has been Implemented, now we have to protect our api/ 2n phase of authebtication. 
+ - Once the token has been created then the user have to send the tokens on every api request. 
+ - On the plateform we have been checking that weather the  jsonwebtoken is valid, jsonwebtoken or not. 
+ - If yes then will fetch the identity of the user and then we do the next opertions. 
+
+ - Generally we recive the jsonwebtoken in your request headers
+ - Create the middleware Folder, and authMiddlewate.js -> isauthenticated 
+   - Check if the jwt is passed in the headers
+   - if not token, bad request and token has been not provided
+   - verifyTokensc use try catch
+     -> In jwt.js -> verifyJWTToken
+   - We can also check ki kya user exist karta hai ki nahi, case: if user deleted the account and In anyhow anyother one have the token then he may access to that account.
+     - we create a function in userService checkIfUserExists
+
+
+
     
  
