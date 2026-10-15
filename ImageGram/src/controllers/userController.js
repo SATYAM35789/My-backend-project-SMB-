@@ -1,3 +1,4 @@
+import { success } from "zod";
 import { signupUserService } from "../services/userService.js"
 
 export async function getProfile() {
@@ -19,6 +20,13 @@ export async function signup(req, res) {
         })
     } catch (error) {
         console.log(error);
+        if(error.status) {
+            return res.status(error.status).json({
+                success : false,
+                message : error.message
+            })
+        }
+
         return res(500).json({
             success : false,
             message : "Internal Server Error"

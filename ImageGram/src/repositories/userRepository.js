@@ -26,6 +26,7 @@ export const createUser = async (userData) => {
         const newUser = await User.create(userData)
         return newUser
     }catch(error){
-        console.log(error);   
+        console.log(error);
+        throw error   
     }
 } 
