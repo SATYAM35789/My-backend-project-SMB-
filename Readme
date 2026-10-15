@@ -723,5 +723,30 @@ zodValidaor.js :-
     2. We check if the JWT is not malformed
     3. Authenticate the user by fetching the payload from the JWT, which will tell us the identity of the user
     4. Then on behalf of the user we will do the operation
-     
 
+  -> Implementing authentication    
+  - In the userService :- 
+    - We create the function, signinUserService. Inside function :-
+    - We check wheather user exist or not. We doing on the basis of email which is uniqely identify the user.
+    - If user exist, then compare the password, we compare password using bcrypt. 
+    - If password is not vaild then we say, unathorized (401) password.  
+    - If user and password exist then we will generate new JWT tokens. 
+      - Install the jsonwebtoken 
+      - create new folder utils
+      - create funnction generateJwtToken, which takes the payload as a parameter
+        - import jwt from jsonwebtoken
+        - jwt.sign() -> Takes : 1. payload 2. secret-key 3. callback function
+    - call the generateJwtToken
+    - return token 
+
+  - In userController, create signin(). Inside the dunction : 
+    - Use try catch
+      - here we call the signinUserService and send the req.body as parameter
+      - send the status code and successfull message. 
+    - In catch, if status code from service layer then, we send the custom message. 
+  
+  - register the router in user.js
+
+  - In zodSigninSchema.js create zodSignInSchema. 
+    
+ 
