@@ -1,5 +1,6 @@
 // Here we will be creating the schema defiition for the user. 
 import mongoose from "mongoose"
+import bcrypt from "bcrypt"
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}\$/
 
@@ -27,6 +28,21 @@ const userSchema = new mongoose.Schema({
         required : true, 
         minLength : 5, 
     }
+})
+
+userSchema.pre("save", function modifiedPassword(next){
+  // Incoming user object access
+  const user = this // Object with plain password
+
+  const saltObject = bcrypt.genSaltSync(9)
+
+  // Hash password 
+  const hashPassword = bcrypt.hashSync(user.password, saltObject)
+
+  // replace the plain password with hash password
+  user.password = hashPassword
+
+  next()
 })
 
 const user = mongoose.model("User", userSchema) // user Colllection
