@@ -671,4 +671,57 @@ zodValidaor.js :-
       - When you have the data and you want to change the data from one form another, we use a lot algorithum. One of the algorithum is bcrypt. These algorithum takes the different ways to change the data from one form to another. 
       - saltRounds : A parameter of bcrypt, take the numeric value. It is the cost of processing the data. More the number of saltRounds, more will be the processing done by bcrypt to hash tha data. So stronger will be the hash created. 
       - Hashing: Most of the hashing algorithum are generally one way. Means that any password that is comming up and we convert them in the hash password. If someone give the same password then then we create the same hashPassword. But hashpassword se wapas password nahi pa sakte. 
-      - So we have the concept called collision, where multiple key may have the same hash value, if want to reverse engineering then you donot know that your hash value convert to what key.  
+      - So we have the concept called collision, where multiple key may have the same hash value, if want to reverse engineering then you donot know that your hash value convert to what key. 
+
+      - Checking if the user send same request of signup again then in this what should be the error should show to clientside.
+       - From the userRepository through the error as ham wahi se user create hone ke liye database mai request kar rahe so If data already exist there then database sabse pahle response toh yahi bhejega. 
+       - so hama yaha se throw karenge and catch karenge userService mai. and wo phir se error through kar dega, ab error controll layer mai bhej denge aur res ka status 500 bhej dega.  So we have the different error handling nulit in function/properties of the mongoose we can search on the google-> documentation. like name, messages, etc
+
+    - whenever we add the unqiue : true constraints to the schema then what internally mongoose does is to identify , wheather this property is uniqe across docement of the collection, mongoose create internally called an index. Index in database is a data structure that databases prepare to do a lot  of things like faster search, find unniue search more quickly, .   
+
+
+### Authentication :- 
+- It is a process where we verify that user is same one, who they clam to be. 
+- Lets say if user want to delete the post, so we allow only whome , who own that post. 
+  - So if i created the post then i should allow to delete the post and I cannot delete any other's post. But to implement all the post, firstly system needs verify who am I. 
+- Authentication can be Implemented in different different mechanism :-
+  - Most used michanism is, Token based authentication :- 
+    - If you signed to the plateform then the plateform gives you the token, now you as the  user is responsible for storing the token. Now everytime, once you recive the token, every time when we have to interact with server/plateform for anything, we are going to send the token with your request. 
+    - The server side then validate the token. then we are able ti access the resources only. 
+    - This token is act as a key card of he hotel, using this token only people will be identify that yes this is valid uer of the plateform. 
+    - This token may expire, we may to relogin after 5 or 7 days. Or if loose the token then we have to again signup the plateform. This kind of authentication is called the token based mechanism. 
+
+   - Inorder to implement the token based authentication, the most general way to implment is JWT : JSON Web Token. 
+   - JWT is a type of token that we can issue to the user. There is also different type of token also exist rather than JWT. 
+   - This is widely used mechanism becacuse JWT is kind of token, that is capable of storing data inside it. And we are able to destructure/fetch this data from the token on the server side. 
+   
+   - JWT token :- 
+      - It is dot sepereted three component token, which is in hexadecimal/alpha-numeric form. 
+      - Header : Provide the some extra piece of information about the tpken. like what algo we are actually using to convert the data in the JWT token. 
+      - payload : It is data, that we are going to encode or store inside the JWT. Data can be username, id and email of the user. We donot need to store the password as there is not the use of that, as when use the token,and we use token again and again. 
+      - signature : It is very crucial part, because to create the signature we use the secret-key, The secret-key only store at server side. So until they know our secret key, they are not able to decode JSON  web token. And we need the same secret key to convert the jwt to the same payload. 
+       - The secret-key take our header and made the base64url string with that. Take dot and takes the payload beas64URL . And then then takes the secret-key. Combined all of this to create new alpha-numeric hash.  (jwt.io pa jakar dekh sakte hai ki jwt kaise kaam karta hai.)
+        
+      - And we also have the jsonwebtoken libary in node :
+      - jwt.sign() method : It takes the payload, privatekey/secretkey and we have to gaive algorithum if we donot give the algo, then it takes the default algo. 
+      - If we have the token and we want to decode on the server side then we have :
+        - jwt.verify method : pass the secretkey, it will decode it. If unable to decode then token then it throw an error. 
+
+  - How we are implement this api ?
+    - /users/signin:post 
+    - for sign we use email and password -> Comes from the req.body because if use query params or url params then it will be stored in the history.
+    
+    1. Check if the user with same email exists or not?
+    2. Check if the passwrord given matches the hassed password or not?
+       - bcrypt will help here, having the bcrypt.compaire() -> takes the plainPasseeord of the client , hashPashword from database and a function.
+       - so here the we hash pasword ko convert nahi kar rahe hai, plainPassword mai we just pass and it will gives the result. 
+       - bcrypt takes the planePasswrod and convert it to hash then that hash is compaire with hash of database.
+    3. Issue a jwt token to a user. 
+
+    Now , If user wants to create the post on plateform?
+    1. User sends JWT token on the plateform
+    2. We check if the JWT is not malformed
+    3. Authenticate the user by fetching the payload from the JWT, which will tell us the identity of the user
+    4. Then on behalf of the user we will do the operation
+     
+
