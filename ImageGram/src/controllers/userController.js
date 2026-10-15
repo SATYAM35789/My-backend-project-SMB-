@@ -1,5 +1,5 @@
 import { success } from "zod";
-import { signupUserService } from "../services/userService.js"
+import { signinUserService, signupUserService } from "../services/userService.js"
 
 export async function getProfile() {
     //  return unimplemented
@@ -32,5 +32,25 @@ export async function signup(req, res) {
             message : "Internal Server Error"
         })
         
+    }
+}
+
+export async function signin(req,res) {
+    try {
+        const response = await signinUserService(req.body)
+        
+    } catch (error) {
+        console.log(error);
+        if(error.status) {
+            return res.status(error.status).json({
+                success : false,
+                message : error.message
+            })
+        }
+
+        return res(500).json({
+            success : false,
+            message : "Internal Server Error"
+        })
     }
 }
