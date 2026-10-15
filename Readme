@@ -609,3 +609,66 @@ zodValidaor.js :-
        - In the postController, we have set the resposne to send on the network that Image is Required.
        So we have done the manual validation for the image. 
        - We can also add the MIME Check, if the file is not particular type then you show them to send the response status accordingly. 
+  
+  How exactly the validation is happening? 
+  - So firstly we have the common middleware, Inside the common middleware we write the function validate and this function expect something which called schema. And schema is actually an object that we send through zod so it the also called the zodSchema. In the zodSchema we have the all the relevent property mentioned thet we expect to come from the request body. Zod schema object is going to pasrse the request body and see/check if it is validating or not. If it is validating then we move to next middleware that is going to be our controller, if not validating then it through an exception and the catch function will catch the exception and we send the response of the error. 
+  - Creating the zodSchema object : 
+    - import the z from the zod
+    - the z object has lot of propertirs we use the z.object()
+    - z.object : take the another object as an parameter
+      - inside we mention the what kind of validation we need. 
+  - In the routing layer : When we doing the post, we are validating the caption of incoming request. 
+  - We are manually validating the image
+
+  ## Authentication :-  
+  Before Coming to the authentication part we would like to do the PreRequistic for the authentiaction that id Registration. 
+
+  ### Registration :- 
+  - It is the process by which user register , him/her self on the plateform on the first time. or Registration is the process with which a user provides their basic details for the very first time to the platform. 
+  - To fulfill the registration we have the signUp api:- 
+     - So the signUp api is going to create the new data on the database. So signup api is generally a post data.
+     - api looks like :- POST:/api/v1/signup
+  - It will be expecting the request body.
+    - Inside the request body we have email, password , userName, etc property will be there. 
+  
+  So when Someone hit this api, technically to things happen : 
+   1. We stored the data of the user on the db
+   2. Any kind of sensitive information like password,etc we transform it in the non-original form.
+     - We do so for the mishappening with owner
+       - AnyOne who have the access of the database can misuse 
+       - if database can got leak and in any form
+       "Hash the sesitive information"
+
+  - We have created the createUser() in the userRepository 
+  - In the signupUserService() method : 
+     - Here will be getting the user related details in the  user object
+     - There are two ways :- 
+       1. Seperately make the database call, and check whather the there is already a user having the  corresponding email or not. 
+       - Technically we do not need to do that because when we try to create, user from the code base we have writte using the schema then and there is already a username and email So that will not allow to create the user. (unique : true)
+       - So we do not need to call the seperately database call by doing the findUserBYEmail because that will create the unnecssary load in the database, we doing db call, we can do in one db call.
+    - We need to hash the password in some compatible format. 
+        - we take the plain passwrod from contol layer to service layer
+        - In service layer we modify plain password in the hashpassword
+        - and then store the password in the database 
+        - There is two way to implement it :- 
+          1. Write the all of its logic in service layer, and should not go the repository layer because it is meant to be the plain db calls 
+          2. So we want to change/modify one of the property of the incoming request object just before it stord in the database.
+          - Most of the database provide the mechansim called triggered. Triggeres are the event handlers, whenever something is about to happens in your database, then we can track this eventa and do something specific. 
+          - So database provide us something which called the triggers, and triggers are kind of event handlers, which are excuted on the different different event. Event may be just before creating the data, just after creating the data, just deleting the data, just after deleting the data, just before updating the data, etc. 
+          - Triggers help us to track and attach event handlers to it. Do something specifice just before the is going to created. 
+          - So this concept will be in the everyDatabase, might be chances that name of this concept ka naam kuchh aur ho. In mongoose they are called hooks -pre and post.
+            -> These hooks are basically attached with the schema. 
+        - Trigger, just before user creation in database and modify our password in this triggers.  
+  
+    - userSchema.pre :- 
+      - before saving the data, we call the callback function which is general function.
+      - the callback function has the access to next middleware chain for mongoose
+      - In the function we get the access to userObject
+        - Accessing incoming user access, the function  has the access of the this keyword, the this keyword points to the userobject from which we are going to call the schema, means incoming userObject, if try to access the this keyword hereyou will be getting the access of incming user objects which is the plain password. 
+        Note :-  If we not make the normal javascript function, if use arroe function then that arrow function will create the problem to us because in arraoe function the this keyword not resolve in this way. 
+
+      - Now we are able to access the user plain pasword now we have to encrypt the password for that we  have the library bcrypt. So technically it is a algorithum, to implment that we have the libarary called bcrypt. 
+      - When you have the data and you want to change the data from one form another, we use a lot algorithum. One of the algorithum is bcrypt. These algorithum takes the different ways to change the data from one form to another. 
+      - saltRounds : A parameter of bcrypt, take the numeric value. It is the cost of processing the data. More the number of saltRounds, more will be the processing done by bcrypt to hash tha data. So stronger will be the hash created. 
+      - Hashing: Most of the hashing algorithum are generally one way. Means that any password that is comming up and we convert them in the hash password. If someone give the same password then then we create the same hashPassword. But hashpassword se wapas password nahi pa sakte. 
+      - So we have the concept called collision, where multiple key may have the same hash value, if want to reverse engineering then you donot know that your hash value convert to what key.  
