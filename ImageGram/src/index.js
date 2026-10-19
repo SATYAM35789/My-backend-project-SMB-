@@ -2,6 +2,7 @@ import express from "express";
 import connectDB from "./config/dbConfig.js";
 import apiRouter from "./routers/apiRouter.js"
 import { isAuthenticated } from "./middleware/authMiddleware.js";
+import ip from 'ip'
 
 
 const PORT = 3000; 
@@ -17,10 +18,11 @@ app.use(express.urlencoded())
 
 app.use('/api', apiRouter)
 
-app.get('/ping', isAuthenticated,(req,res)=>{
+app.get('/ping', (req,res)=>{
     console.log(req.user);
-    console.log(req.body);    
-    return res.json({message: "pong"})
+    console.log(req.body);   
+    const clientIp = ip.address(); 
+    return res.json({message: "pong" + clientIp})
 })  
 
 
