@@ -885,7 +885,33 @@ zodValidaor.js :-
     }
     ```
 
-  -   
+  - If having the public api and anyone can hit that api, then some peoplw try to do, server-down by  hitting your server so many times. May they may write the scripts those  may hit 1000 req per sec. And if server is not scaled enough then tecnically what an happen is oue server start crashing. If we do the auto scalling, then you may get a lot of bill. 
+  - DDOS attack :- Distributted denial of service  :- To prevent this type of attack we should do the rate-limiting. 
+   - Rate limiting :- Deciding how many request per second at max can actually come from a particular IP address. If some exceeds that then is this case our server stop responding to them(that ip). 
+  ### Implementing rate limitng :- 
+  - We have the library called express-rate-limit npm
+  - We can also write our own rate-limit libaray where we have write our own logic. 
+  - So we have to create the basic limit middleware (limiter middleware)
+    - Can decide parameter 
+      - windowMS : decide the time in milisecond
+      - max/limit : on particular time how many request can be done by particular ip
+  - and attach it to the router
+
+  AWS :- 
+  - There is a service called the EC2 i,e Elastic Compute Cloude. Ec2 is a service which help us to rent the rent virtual  servers in the cloude. On our requirement based we can add or remove the server. 
+  - Creating the AWS instance
+  - We use key , actually it is file using this we access the machine on AWS using SSH(Secure Shell) protocol. 
+    - during the process of crating a instance we have option to create key or use the key you are having. 
+
+    How can you remove write access on the key generated file? 
+    - chmod 400 nameOfTheFile
+    - ls : verify karlo ki write access hata hai ki nahi. 
+
+    From the your own window how can you access the os of aws which you have create while creating the instance. 
+    - ssh -i keyfilename.pem  userNameoftheMACHINE@PublicIpAddress 
+
+
+
     
 
 
