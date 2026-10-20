@@ -763,7 +763,130 @@ zodValidaor.js :-
    - We can also check ki kya user exist karta hai ki nahi, case: if user deleted the account and In anyhow anyother one have the token then he may access to that account.
      - we create a function in userService checkIfUserExists
 
+### Deploy 
+ - Whenever we have been working on the project, it is important to deploy them. Why is it important? 
+  - Get the understanding on , exactly how your project looklike in the production environment. 
+  - Many people do the deploy to showcase in their resume, this is their portfolio, this is the all the project that they have technically prepared. 
+  - There is free service called render. So it is free then it hsa the some limitation in terms of functionalities and features. 
+  - There is highlt chance when you join the company, probably your company is not going to use render because, company needs more control, and the plateform like render-herokoa realtively more expensive.Because they manage a lot of things for us. It is a plateform as a service, means they been implemented all of the logic and we just have to go set some of the buttons and everything will be deploy. 
+  - Actual cloud plateform like AWS, google cloud, microsoft azure, digital ocean, etc these plateform also provide the lot of services.
+  - Infrastructure as a service means we just use these plateform to just borrow the hardware component. So if borrow the h/w components then we have to manage these components virtually by ourselves. -> It saves the money and it gives the more granual control. 
+  - In deploying , follow the each steps carefully, if something wrong happen then try to solve the issue for some time, If not resolve then try again from starting and follow the steps carefully. 
+  - Sometimes , we have got the some limitation from the plateform like render. So try on another plateform before going to check your code. 
+  - Cloud-Computing :- H/w resources are remotly present somewhere but we have the access to use that one. When these plateform gives the access to the resources then the plateform must have the access to the physical resources. They present in the place called data-center. 
 
+  - So On aws after getting the successfully connection of database, then after we are not able to access the our sites because of networking issue. We have prepared the EC2 instances and we allowed 2 things on the EC2 instances :
+  - Anybody can do the SSH conne ction to the ec2 instances
+  - Anybody can do the http connection to EC2 instanced. 
 
+  Problem : Is we are unable to the access the port 3000, default port for the http connection is port 80, so when we enable the http connection, we enable through port 80 not throgh port 3000. We need to  manually enable it. How can we enable it. 
+  - Every EC2 machine is connected with something called as a security group. The security group define the networking configration of the EC2 machine. 
+
+  - We have to keep the server run when the our shell had been close. To do that we have the package , using that we able to covert the running server on background process. -> pm2 -> install it as global -> sudo npm - -g pm2 
+
+ - In production , we have multiple instances running, so that one server should not get much load for that we have load balancer in between. 
+ - How the technically the architecture looks like :- 
+  client -> load balancer -> server1
+                          -> server2
+  - client : makes request on loadbalancer
+  - load balancer :responsible for farwarding the request on the server1 or server2
+
+ ### How can we set own load balacer :- 
+  1. If we donot want to use the own load balancer then we can use the Amazon's self managed load balancer called elsatice load balancer (ELB).
+  2. Issue a new server on the asw and write yourown algorithum. Do DSA and write your own server.  
+  3. To determine the own load balancer, first we need to configure thet from which server the we need the package npi ip, it will help us and give us the ip address own which our server is running.
+   - make the object in the index.js 
+  
+  - If we stop the instance for nay of the reason, then public ip will be not showed beacuse it is the temperay public ip address that is given to us. It we stop it then for aws there is no point to keep it allocating. There is not that much of ip address that AWS would be giving to all. 
+  - So if restart the server then Public is gone, to solve this issue we have the elasitc IP , means allocating the permanent IP address to your EC2 machine. If we use the elastice ip for the long peried of time then AWS can make charge on it, as we reserving the ip. 
+
+  - Steps for creating the own load balancer
+    - we have the package nginx which is use as load balancer.
+    - create the new instance 
+      - search nginx load balancer configuration ubantu digitalocean
+       - vim file khlo
+          ```
+          sudo vim /etc/nginx/sites-available/default
+          ```
+          ```
+          upstream backend {
+            server instancepublicIP:PORT
+            server instancepublicIP:PORT
+          }
+          -> server{} -> location -> proxy_pass http://backend
+          ```
+        - restart your nginx
+
+  - In the upstring backend {} : We can also define the weight -> round-robin , hash,etc
+
+  ### Implementing like feature on the posts, comments, etc
+  - go to schama and create like.js
+    - onModel : property is responsible for type of request has been done, on which model the like has been implemented like on post, on comment, on reel, story etc
+    - likeabledId : is kind of object id. And this object id will refers the corresponding model id which created like on comment so comment id and if on post then  postid. 
+    - mongoose give us the property refer(refpath) -> dynamic references (mongoose official docs)
+     - Dynamic References via refpath :- Mongoose can also populate from multiple collections based on the value of a property in the document. 
     
+  - Adding the comments :- 
+  - So we have if else check, if add new features then too we may have the if else check so there is princple called Open Close Principle refers to the facts that a function should be Open for extenstion but closed for the modification. 
+    like :
+    ```js
+    export const createCommentService = async (Content, userId, onModel, commentableId=> {
+    try {
+        if(onModel=="Post")
+        {
+            // if true then ham comment bana sakte hai post par aur commentabledId is post id
+ 
+            // 1. Check if posts exists or not
+            const post = await findPostById(commentableId)
+            if(!post) {
+                throw {
+                    message : "Post not found",
+                    status : 404
+                }
+            }
+
+            // 2. Create comment Entity
+            const newComment = await createComment(Content,userId, onModel, commentableId)
+
+            // 3. Add comment to post
+            post.comments.push(newComment._id)
+
+            //4. Save the post
+            await post.save()
+
+            return newComment
+
+        } 
+        else if(onModel == 'Comment'){
+            // Comment is being made on a Comment and CommentabledID is comment id
+ 
+            // 1. Check if posts exists or not
+            const post = await findCommentById(commentableId)
+            if(!post) {
+                throw {
+                    message : "Comment not found",
+                    status : 404
+                }
+            }
+
+            // 2. Create comment Entity
+            const newComment = await createComment(Content,userId, onModel, commentableId)
+
+            // 3. Add comment to post
+            parentComment.replies.push(newComment._id)
+
+            //4. Save the post
+            await parentComment.save()
+
+            return newComment
+        }
+    } catch (error) {
+        
+    }
+    ```
+
+  -   
+    
+
+
  
