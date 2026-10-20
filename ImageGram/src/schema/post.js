@@ -14,7 +14,19 @@ const postSchema = new mongoose.Schema({
     user : {
         type : mongoose.Schema.Types.ObjectId, // This will be the id of the user who created the post.
         ref : "User" // This will be the name of the collection we are referencing to. In this case, it is the User collection.
-    }
+    },
+    comments : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Comment"
+        }
+    ],
+    likes : [
+            {
+                type : mongoose.Schema.Types.ObjectId,
+                ref : "Like"
+            }
+        ]
 }, {timestamps : true})
 
 const post = mongoose.model("Post", postSchema) // post Colllection
