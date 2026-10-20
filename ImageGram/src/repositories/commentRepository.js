@@ -11,7 +11,7 @@ export const createComment = async (Content, userId, onModel, commentableId) => 
 
 export const findCommentById = async (id)=> {
     try {
-        const comment = await Comment.findById(id)
+        const comment = await Comment.findById(id).populate(`replies`)
         return comment 
     } catch (error) {
         console.log(error);        

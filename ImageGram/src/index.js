@@ -3,11 +3,19 @@ import connectDB from "./config/dbConfig.js";
 import apiRouter from "./routers/apiRouter.js"
 import { isAuthenticated } from "./middleware/authMiddleware.js";
 import ip from 'ip'
+import {rateLimit} from 'express-rate-limit'
 
 
 const PORT = 3000; 
 
 const app = express() // it an instance of express
+
+const limiter = rateLimit({
+    windowMs : 0.5 * 60 * 1000 ,// 30 seconds
+    max : 5 // limit each IP to 5 requests to windows
+})
+
+app.use(limiter) // apply rate limiter to all requests 
 
 
 // Req body ke through clinet info bhej paaye usko liye
